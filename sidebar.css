@@ -1,0 +1,77 @@
+#ai-query-bookmarks {
+  position: fixed;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 999999;
+  display: flex;
+  flex-direction: column;
+  width: 240px;
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+#bookmark-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+.bookmark-card {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-width: 0; /* IMPORTANT FIX */
+  cursor: pointer;
+  font-size: 13px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.05);
+  transition: background 0.15s ease;
+  box-sizing: border-box;
+}
+
+.bookmark-card:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.bookmark-label {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Scrollbar */
+#bookmark-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+#bookmark-list::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+}
+
+.bookmark-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.bookmark-star {
+  margin-left: 8px;
+  cursor: pointer;
+  opacity: 0.6;
+  font-size: 14px;
+  transition: opacity 0.15s ease;
+}
+
+.bookmark-star:hover {
+  opacity: 1;
+}
+
+.bookmark-card.starred {
+  background: rgba(255, 215, 0, 0.08);
+}

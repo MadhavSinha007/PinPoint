@@ -1,0 +1,38 @@
+{
+  "manifest_version": 3,
+  "name": "AI Bookmark Pro",
+  "version": "2.0",
+  "description": "Professional AI chat bookmark system.",
+  "permissions": ["storage"],
+  "background": {
+    "service_worker": "background.js",
+    "scripts": ["background.js"]
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://chatgpt.com/*",
+        "https://chat.openai.com/*",
+        "https://gemini.google.com/*",
+        "https://claude.ai/*"
+      ],
+      "js": ["content.js"],
+      "css": ["sidebar.css"],
+      "run_at": "document_idle"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["icons/*.png"],
+      "matches": ["<all_urls>"]
+    }
+  ]
+}
+
+
+
+
+
+ 
+
+
