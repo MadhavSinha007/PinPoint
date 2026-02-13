@@ -259,7 +259,6 @@
       }
     });
   }
-
   function observeMessages() {
     let scanTimeout;
     const observer = new MutationObserver(() => {
