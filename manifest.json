@@ -5,9 +5,7 @@
   "description": "Professional AI chat bookmark system.",
   "permissions": ["storage"],
   "background": {
-    "service_worker": "background.js",
-    "scripts": ["background.js"]
-   
+    "service_worker": "background.js"
   },
   "content_scripts": [
     {
@@ -19,7 +17,7 @@
       ],
       "js": ["content.js"],
       "css": ["sidebar.css"],
-      "run_at": "document_start"
+      "run_at": "document_idle"
     }
   ],
   "web_accessible_resources": [
@@ -29,10 +27,3 @@
     }
   ]
 }
-
-
-
-
-
-
-

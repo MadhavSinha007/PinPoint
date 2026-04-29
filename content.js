@@ -1,106 +1,63 @@
-(
-  function () {
-
+(() => {
   let currentPath = location.pathname;
   let currentHash = location.hash;
+
   let bookmarks = [];
   let messageMap = new Map();
   let textToBookmarkMap = new Map();
+
   let container = null;
   let list = null;
   let collapsed = false;
   let isLoading = false;
-  let conversationKey;
+  let conversationKey = getConversationKey();
   let lastLoadKey = null;
 
   function getConversationKey() {
-    return "ai_bookmarks_" + location.pathname + location.hash;
+    return `ai_bookmarks_${location.hostname}_${location.pathname}_${location.hash}`;
   }
 
-  conversationKey = getConversationKey();
-
-  init();
-
   function init() {
-    console.log("[BOOKMARKS] Init started");
-    console.log("[BOOKMARKS] Current hostname:", location.hostname);
     createUI();
     loadBookmarksAndScan();
     observeMessages();
     watchURLChange();
     setupToggleShortcut();
-    
-    // Debug: log available message elements
-    setTimeout(() => {
-      console.log("[BOOKMARKS] ===== SELECTOR DEBUG =====");
-      console.log("[BOOKMARKS] Hostname:", location.hostname);
-      
-      if (location.hostname.includes("chatgpt") || location.hostname.includes("openai")) {
-        console.log("[BOOKMARKS] ChatGPT detected");
-        const selector1 = document.querySelectorAll("div[data-message-author-role='user']");
-        console.log("[BOOKMARKS] Selector 1 found:", selector1.length, "messages");
-        
-        const selector2 = document.querySelectorAll("[data-message-id]");
-        console.log("[BOOKMARKS] All [data-message-id]:", selector2.length);
-        
-        const selector3 = document.querySelectorAll("[role='article']");
-        console.log("[BOOKMARKS] [role='article']:", selector3.length);
-        
-        const selector4 = document.querySelectorAll("[class*='message']");
-        console.log("[BOOKMARKS] [class*='message']:", selector4.length);
-      }
-      
-      if (location.hostname.includes("gemini")) {
-        console.log("[BOOKMARKS] Gemini detected");
-        const selector1 = document.querySelectorAll("user-query");
-        console.log("[BOOKMARKS] <user-query>:", selector1.length);
-        
-        const selector2 = document.querySelectorAll("[data-user-query]");
-        console.log("[BOOKMARKS] [data-user-query]:", selector2.length);
-        
-        const selector3 = document.querySelectorAll(".query-text");
-        console.log("[BOOKMARKS] .query-text:", selector3.length);
-        
-        const selector4 = document.querySelectorAll("[role='region']");
-        console.log("[BOOKMARKS] [role='region']:", selector4.length);
-      }
-      
-      const found = getUserMessages();
-      console.log("[BOOKMARKS] getUserMessages() found:", found.length, "messages");
-      found.forEach((msg, i) => {
-        console.log("[BOOKMARKS] Message", i, ":", msg.innerText?.substring(0, 50) || "(no text)");
-      });
-    }, 1000);
+
+    console.log("[AI Bookmark Pro] Initialized");
   }
 
   function watchURLChange() {
     setInterval(() => {
-      const newPath = location.pathname;
-      const newHash = location.hash;
-      
-      if (newPath !== currentPath || newHash !== currentHash) {
-        console.log("[BOOKMARKS] URL changed - resetting");
-        currentPath = newPath;
-        currentHash = newHash;
+      if (location.pathname !== currentPath || location.hash !== currentHash) {
+        currentPath = location.pathname;
+        currentHash = location.hash;
         resetForNewConversation();
       }
     }, 500);
   }
 
   function resetForNewConversation() {
-    console.log("[BOOKMARKS] Resetting for new conversation");
     isLoading = true;
+
     conversationKey = getConversationKey();
     bookmarks = [];
     messageMap.clear();
     textToBookmarkMap.clear();
-    list.innerHTML = "";
+
+    if (list) list.innerHTML = "";
+
     lastLoadKey = null;
     loadBookmarksAndScan();
   }
 
   function createUI() {
-    if (document.getElementById("ai-query-bookmarks")) return;
+    const existing = document.getElementById("ai-query-bookmarks");
+    if (existing) {
+      container = existing;
+      list = existing.querySelector("#bookmark-list");
+      return;
+    }
 
     container = document.createElement("div");
     container.id = "ai-query-bookmarks";
@@ -110,41 +67,34 @@
 
     container.appendChild(list);
     document.body.appendChild(container);
-    console.log("[BOOKMARKS] UI created");
   }
 
   function saveBookmarks() {
-    chrome.storage.local.set({ [conversationKey]: bookmarks });
+    chrome.storage.local.set({
+      [conversationKey]: bookmarks
+    });
   }
 
   function loadBookmarksAndScan() {
     const keyToLoad = conversationKey;
     lastLoadKey = keyToLoad;
     isLoading = true;
-    
-    chrome.storage.local.get(keyToLoad, (result) => {
-      if (lastLoadKey !== keyToLoad) {
-        return;
-      }
 
-      if (result[keyToLoad]) {
-        bookmarks = result[keyToLoad];
-        console.log("[BOOKMARKS] Loaded", bookmarks.length, "bookmarks");
+    chrome.storage.local.get(keyToLoad, result => {
+      if (lastLoadKey !== keyToLoad) return;
 
-        bookmarks.forEach(b => {
-          const msg = findMessageByText(b.text);
-          if (msg) {
-            createBookmarkItem(msg, b.text, b.starred, false);
-          }
-        });
+      bookmarks = Array.isArray(result[keyToLoad]) ? result[keyToLoad] : [];
 
-        sortBookmarksUI();
-      } else {
-        console.log("[BOOKMARKS] No saved bookmarks for this conversation");
-      }
+      bookmarks.forEach(bookmark => {
+        const msg = findMessageByText(bookmark.text);
+        if (msg) {
+          createBookmarkItem(msg, bookmark.text, Boolean(bookmark.starred), false);
+        }
+      });
 
-      console.log("[BOOKMARKS] Scanning messages...");
+      sortBookmarksUI();
       scanMessages();
+
       isLoading = false;
     });
   }
@@ -173,16 +123,16 @@
     return [];
   }
 
+  function getMessageText(element) {
+    return element?.innerText?.trim() || "";
+  }
+
   function findMessageByText(text) {
-    return getUserMessages().find(
-      m => m.innerText?.trim() === text
-    );
+    return getUserMessages().find(msg => getMessageText(msg) === text);
   }
 
   function createBookmarkItem(messageElement, text, starred = false, save = true) {
-    if (textToBookmarkMap.has(text)) {
-      return;
-    }
+    if (!list || !text || textToBookmarkMap.has(text)) return;
 
     const item = document.createElement("div");
     item.className = "bookmark-card";
@@ -190,54 +140,59 @@
 
     const label = document.createElement("span");
     label.className = "bookmark-label";
-    label.textContent =
-      text.length > 80 ? text.substring(0, 80) + "..." : text;
+    label.textContent = text.length > 80 ? `${text.slice(0, 80)}...` : text;
+    label.title = text;
 
     const star = document.createElement("span");
     star.className = "bookmark-star";
     star.textContent = starred ? "★" : "☆";
+    star.title = "Toggle star";
 
-    star.onclick = (e) => {
-      e.stopPropagation();
+    star.addEventListener("click", event => {
+      event.stopPropagation();
 
       const isStarred = item.classList.toggle("starred");
       star.textContent = isStarred ? "★" : "☆";
 
-      bookmarks = bookmarks.map(b =>
-        b.text === text ? { ...b, starred: isStarred } : b
+      bookmarks = bookmarks.map(bookmark =>
+        bookmark.text === text
+          ? { ...bookmark, starred: isStarred }
+          : bookmark
       );
 
       sortBookmarksUI();
       saveBookmarks();
-    };
+    });
 
-    item.appendChild(label);
-    item.appendChild(star);
-
-    item.onclick = () => {
+    item.addEventListener("click", () => {
       messageElement.scrollIntoView({
         behavior: "smooth",
         block: "center"
       });
-    };
+    });
 
+    item.appendChild(label);
+    item.appendChild(star);
     list.appendChild(item);
+
     messageMap.set(messageElement, item);
     textToBookmarkMap.set(text, item);
 
     if (save) {
-      bookmarks.push({ text, starred: false });
+      bookmarks.push({ text, starred });
       saveBookmarks();
     }
   }
 
   function sortBookmarksUI() {
+    if (!list) return;
+
     const items = Array.from(list.children);
 
     items.sort((a, b) => {
-      const aStar = a.classList.contains("starred");
-      const bStar = b.classList.contains("starred");
-      return bStar - aStar;
+      const aStarred = a.classList.contains("starred");
+      const bStarred = b.classList.contains("starred");
+      return Number(bStarred) - Number(aStarred);
     });
 
     items.forEach(item => list.appendChild(item));
@@ -245,25 +200,23 @@
 
   function scanMessages() {
     const messages = getUserMessages();
-    console.log("[BOOKMARKS] Found", messages.length, "messages");
 
     messages.forEach(msg => {
       if (messageMap.has(msg)) return;
 
-      const text = msg.innerText?.trim();
-      if (!text) return;
+      const text = getMessageText(msg);
+      if (!text || textToBookmarkMap.has(text)) return;
 
-      if (!textToBookmarkMap.has(text)) {
-        console.log("[BOOKMARKS] Creating bookmark:", text.substring(0, 40) + "...");
-        createBookmarkItem(msg, text);
-      }
+      createBookmarkItem(msg, text, false, true);
     });
   }
+
   function observeMessages() {
     let scanTimeout;
+
     const observer = new MutationObserver(() => {
       if (isLoading) return;
-      
+
       clearTimeout(scanTimeout);
       scanTimeout = setTimeout(scanMessages, 300);
     });
@@ -275,12 +228,17 @@
   }
 
   function setupToggleShortcut() {
-    document.addEventListener("keydown", (e) => {
-      if (e.altKey && e.key.toLowerCase() === "b") {
+    document.addEventListener("keydown", event => {
+      if (event.altKey && event.key.toLowerCase() === "b") {
         collapsed = !collapsed;
         container.style.display = collapsed ? "none" : "flex";
       }
     });
   }
 
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init);
+  } else {
+    init();
+  }
 })();
