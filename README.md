@@ -1,104 +1,119 @@
 # 🚀 AI Bookmark Pro
 
-A lightweight browser extension that lets you **bookmark, star, and instantly navigate your AI chat prompts** across platforms like:
-
-- ChatGPT
-- Gemini
-- Claude
-
-Works on both **Chrome** and **Firefox** with Manifest V3.
+A lightweight browser extension that lets you **bookmark, search, star, and navigate AI chat prompts** across platforms like ChatGPT, Gemini, and Claude.
 
 ---
 
 ## ✨ Features
 
-- 📌 Auto-bookmarks your prompts in real-time  
+- 📌 Auto-bookmarks your prompts  
+- 🔍 Search through bookmarks instantly  
 - ⭐ Star important queries  
-- ⚡ Instant scroll to any message  
+- ⚡ Click to scroll to messages  
 - 🧠 Per-conversation storage  
-- ⌨️ Toggle sidebar with `Alt + B`  
-- 🌐 Works across multiple AI platforms  
+- 🧲 Collapsible sidebar (arrow toggle)  
+- ⌨️ Shortcut: `Alt + B`  
 
 ---
 
-## 🧩 Supported Sites
+## 🌐 Supported Browsers
 
-- https://chatgpt.com  
-- https://chat.openai.com  
-- https://gemini.google.com  
-- https://claude.ai  
+### Chromium-based (use Chrome manifest)
+- Google Chrome
+- Microsoft Edge
+- Brave
+- Opera
+- Vivaldi
+- Arc
 
----
-
-## 📦 Installation
-
-### 🔵 Chrome / Chromium (Edge, Brave, etc.)
-
-1. Download or clone this repo:
-   ```bash
-   git clone https://github.com/your-username/ai-bookmark-pro.git
-   ```
-
-2. Open Chrome and go to:
-   chrome://extensions/
-
-3. Enable **Developer mode** (top right)
-
-4. Click **Load unpacked**
-
-5. Select the project folder
+### Firefox-based (use Firefox manifest)
+- Mozilla Firefox
+- LibreWolf
+- Waterfox
 
 ---
 
-### 🟠 Firefox
+## 📁 Project Structure
 
-#### Option 1: Temporary install
-
-1. Go to:
-   about:debugging#/runtime/this-firefox
-
-2. Click **Load Temporary Add-on**
-
-3. Select `manifest.json`
-
----
-
-#### Option 2: Permanent install
-
-1. Zip the extension:
-   ```bash
-   zip -r ai-bookmark-pro.zip .
-   ```
-
-2. Go to:
-   about:addons
-
-3. Install from file
+```
+AI-Bookmark-Pro/
+│
+├── manifest.chrome.json
+├── manifest.firefox.json
+│
+├── background.js
+├── content.js
+├── sidebar.css
+│
+└── icons/
+```
 
 ---
 
-## ⚙️ How It Works
+## ⚙️ Installation
 
-- Scans AI chat pages for user messages  
-- Creates bookmarks automatically  
-- Stores them per conversation  
+### Chrome / Edge / Brave / Opera
+
+1. Rename:
+```
+manifest.chrome.json → manifest.json
+```
+
+2. Open:
+```
+chrome://extensions
+```
+
+3. Enable **Developer Mode**
+
+4. Click **Load Unpacked**
+
+5. Select project folder
+
+---
+
+### Firefox
+
+1. Rename:
+```
+manifest.firefox.json → manifest.json
+```
+
+2. Open:
+```
+about:debugging#/runtime/this-firefox
+```
+
+3. Click **Load Temporary Add-on**
+
+4. Select `manifest.json`
 
 ---
 
 ## 🎮 Usage
 
 - Click bookmark → scroll to message  
-- Click ⭐ → toggle important  
-- Press **Alt + B** → toggle sidebar  
+- Click ⭐ → mark important  
+- Use 🔍 search bar → filter bookmarks  
+- Click arrow `>` / `<` → collapse sidebar  
+- Press `Alt + B` → toggle panel  
 
 ---
 
-## 🛠 Tech Stack
+## 🧠 How It Works
 
-- Manifest V3  
-- Vanilla JavaScript  
-- MutationObserver  
-- Chrome Storage API  
+- Detects user messages in AI chats  
+- Creates bookmarks automatically  
+- Stores them locally per conversation  
+- Updates in real-time using MutationObserver  
+
+---
+
+## ⚠️ Notes
+
+- Firefox support uses Manifest V2 (temporary workaround)  
+- Sidebar is transparent and overlays UI  
+- Selectors may need updates if sites change  
 
 ---
 

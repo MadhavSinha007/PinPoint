@@ -1,4 +1,6 @@
 (() => {
+  const browserAPI = typeof browser !== "undefined" ? browser : chrome;
+
   let currentPath = location.pathname;
   let currentHash = location.hash;
 
@@ -7,9 +9,14 @@
   let textToBookmarkMap = new Map();
 
   let container = null;
+  let header = null;
+  let body = null;
+  let searchInput = null;
   let list = null;
+
   let collapsed = false;
   let isLoading = false;
+
   let conversationKey = getConversationKey();
   let lastLoadKey = null;
 
@@ -42,10 +49,12 @@
 
     conversationKey = getConversationKey();
     bookmarks = [];
+
     messageMap.clear();
     textToBookmarkMap.clear();
 
     if (list) list.innerHTML = "";
+    if (searchInput) searchInput.value = "";
 
     lastLoadKey = null;
     loadBookmarksAndScan();
@@ -53,8 +62,12 @@
 
   function createUI() {
     const existing = document.getElementById("ai-query-bookmarks");
+
     if (existing) {
       container = existing;
+      header = existing.querySelector("#bookmark-header");
+      body = existing.querySelector("#bookmark-body");
+      searchInput = existing.querySelector("#bookmark-search");
       list = existing.querySelector("#bookmark-list");
       return;
     }
@@ -62,33 +75,92 @@
     container = document.createElement("div");
     container.id = "ai-query-bookmarks";
 
+    header = document.createElement("div");
+    header.id = "bookmark-header";
+
+    const title = document.createElement("span");
+    title.id = "bookmark-title";
+    title.textContent = "Bookmarks";
+
+    const collapseButton = document.createElement("button");
+    collapseButton.id = "bookmark-collapse";
+    collapseButton.textContent = ">";
+    collapseButton.title = "Collapse bookmarks";
+
+    collapseButton.addEventListener("click", () => {
+      collapsed = !collapsed;
+      updateCollapseState();
+    });
+
+    header.appendChild(title);
+    header.appendChild(collapseButton);
+
+    body = document.createElement("div");
+    body.id = "bookmark-body";
+
+    searchInput = document.createElement("input");
+    searchInput.id = "bookmark-search";
+    searchInput.type = "text";
+    searchInput.placeholder = "Search bookmarks...";
+
+    searchInput.addEventListener("input", filterBookmarks);
+
     list = document.createElement("div");
     list.id = "bookmark-list";
 
-    container.appendChild(list);
+    body.appendChild(searchInput);
+    body.appendChild(list);
+
+    container.appendChild(header);
+    container.appendChild(body);
+
     document.body.appendChild(container);
+
+    updateCollapseState();
+  }
+
+  function updateCollapseState() {
+    const collapseButton = document.getElementById("bookmark-collapse");
+
+    if (!body || !collapseButton || !container) return;
+
+    body.style.display = collapsed ? "none" : "flex";
+
+    container.classList.toggle("collapsed", collapsed);
+
+    collapseButton.textContent = collapsed ? "<" : ">";
+    collapseButton.title = collapsed ? "Expand bookmarks" : "Collapse bookmarks";
   }
 
   function saveBookmarks() {
-    chrome.storage.local.set({
+    browserAPI.storage.local.set({
       [conversationKey]: bookmarks
     });
   }
 
   function loadBookmarksAndScan() {
     const keyToLoad = conversationKey;
+
     lastLoadKey = keyToLoad;
     isLoading = true;
 
-    chrome.storage.local.get(keyToLoad, result => {
+    browserAPI.storage.local.get(keyToLoad, result => {
       if (lastLoadKey !== keyToLoad) return;
 
-      bookmarks = Array.isArray(result[keyToLoad]) ? result[keyToLoad] : [];
+      bookmarks = Array.isArray(result[keyToLoad])
+        ? result[keyToLoad]
+        : [];
 
       bookmarks.forEach(bookmark => {
         const msg = findMessageByText(bookmark.text);
+
         if (msg) {
-          createBookmarkItem(msg, bookmark.text, Boolean(bookmark.starred), false);
+          createBookmarkItem(
+            msg,
+            bookmark.text,
+            Boolean(bookmark.starred),
+            false
+          );
         }
       });
 
@@ -136,7 +208,11 @@
 
     const item = document.createElement("div");
     item.className = "bookmark-card";
-    if (starred) item.classList.add("starred");
+    item.dataset.text = text.toLowerCase();
+
+    if (starred) {
+      item.classList.add("starred");
+    }
 
     const label = document.createElement("span");
     label.className = "bookmark-label";
@@ -161,6 +237,7 @@
       );
 
       sortBookmarksUI();
+      filterBookmarks();
       saveBookmarks();
     });
 
@@ -173,15 +250,33 @@
 
     item.appendChild(label);
     item.appendChild(star);
+
     list.appendChild(item);
 
     messageMap.set(messageElement, item);
     textToBookmarkMap.set(text, item);
 
     if (save) {
-      bookmarks.push({ text, starred });
+      bookmarks.push({
+        text,
+        starred
+      });
+
       saveBookmarks();
     }
+
+    filterBookmarks();
+  }
+
+  function filterBookmarks() {
+    if (!list || !searchInput) return;
+
+    const query = searchInput.value.trim().toLowerCase();
+
+    Array.from(list.children).forEach(item => {
+      const text = item.dataset.text || "";
+      item.style.display = text.includes(query) ? "flex" : "none";
+    });
   }
 
   function sortBookmarksUI() {
@@ -192,6 +287,7 @@
     items.sort((a, b) => {
       const aStarred = a.classList.contains("starred");
       const bStarred = b.classList.contains("starred");
+
       return Number(bStarred) - Number(aStarred);
     });
 
@@ -205,6 +301,7 @@
       if (messageMap.has(msg)) return;
 
       const text = getMessageText(msg);
+
       if (!text || textToBookmarkMap.has(text)) return;
 
       createBookmarkItem(msg, text, false, true);
@@ -218,7 +315,10 @@
       if (isLoading) return;
 
       clearTimeout(scanTimeout);
-      scanTimeout = setTimeout(scanMessages, 300);
+
+      scanTimeout = setTimeout(() => {
+        scanMessages();
+      }, 300);
     });
 
     observer.observe(document.body, {
@@ -231,7 +331,7 @@
     document.addEventListener("keydown", event => {
       if (event.altKey && event.key.toLowerCase() === "b") {
         collapsed = !collapsed;
-        container.style.display = collapsed ? "none" : "flex";
+        updateCollapseState();
       }
     });
   }
