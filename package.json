@@ -1,0 +1,8 @@
+{
+  "name": "ai-bookmark-pro",
+  "version": "2.1.0",
+  "scripts": {
+    "chrome": "node build.js chrome",
+    "firefox": "node build.js firefox"
+  }
+}
