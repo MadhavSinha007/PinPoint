@@ -1,118 +1,151 @@
 #ai-query-bookmarks {
   position: fixed;
-  right: 20px;
+  right: 12px;
   top: 50%;
   transform: translateY(-50%);
   z-index: 999999;
+  width: 260px;
+  max-width: calc(100vw - 24px);
   display: flex;
   flex-direction: column;
-  width: 260px;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  border-radius: 10px;
-  overflow: hidden;
   background: transparent;
+  border-radius: 14px;
+  overflow: visible;
+  pointer-events: none;
+  transition: width 0.22s ease, opacity 0.22s ease;
 }
 
-#ai-query-bookmarks.collapsed {
-  width: auto;
+#ai-query-bookmarks * {
+  box-sizing: border-box;
+}
+
+#bookmark-header,
+#bookmark-body {
+  pointer-events: auto;
 }
 
 #bookmark-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 9px 10px;
-  background: transparent;
-  color: white;
-  font-size: 13px;
-  font-weight: 600;
-}
-
-#ai-query-bookmarks.collapsed #bookmark-header {
-  padding: 0;
-}
-
-#ai-query-bookmarks.collapsed #bookmark-title {
-  display: none;
+  gap: 8px;
+  min-height: 38px;
+  padding: 6px;
 }
 
 #bookmark-title {
+  max-width: 180px;
+  padding: 7px 10px;
+  border-radius: 999px;
+  color: rgba(255, 255, 255, 0.92);
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap;
+  background: rgba(20, 20, 20, 0.42);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
 }
 
 #bookmark-collapse {
-  border: none;
-  outline: none;
-  background: rgba(0, 0, 0, 0.35);
-  color: white;
-  width: 28px;
-  height: 42px;
-  border-radius: 8px;
+  border: 0;
+  outline: 0;
+  width: 30px;
+  height: 38px;
+  border-radius: 999px;
   cursor: pointer;
-  font-size: 20px;
-  line-height: 20px;
+  color: rgba(255, 255, 255, 0.94);
+  background: rgba(20, 20, 20, 0.42);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1;
+  transition: transform 0.18s ease, background 0.18s ease, opacity 0.18s ease;
 }
 
 #bookmark-collapse:hover {
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(20, 20, 20, 0.62);
+  transform: scale(1.04);
+}
+
+#bookmark-collapse:active {
+  transform: scale(0.96);
 }
 
 #bookmark-body {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  padding: 8px;
-  background: transparent;
+  padding: 6px;
+  opacity: 1;
+  transform: translateX(0);
+  transition: opacity 0.22s ease, transform 0.22s ease, max-height 0.22s ease;
 }
 
 #bookmark-search {
   width: 100%;
-  box-sizing: border-box;
-  border: none;
-  outline: none;
-  border-radius: 7px;
-  padding: 8px 9px;
+  border: 0;
+  outline: 0;
+  border-radius: 999px;
+  padding: 9px 12px;
   font-size: 13px;
-  color: white;
-  background: rgba(0, 0, 0, 0.35);
+  color: rgba(255, 255, 255, 0.96);
+  background: rgba(20, 20, 20, 0.42);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.16);
+}
+
+#bookmark-search:focus {
+  background: rgba(20, 20, 20, 0.62);
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.16);
 }
 
 #bookmark-search::placeholder {
-  color: rgba(255, 255, 255, 0.6);
+  color: rgba(255, 255, 255, 0.58);
 }
 
 #bookmark-list {
   display: flex;
   flex-direction: column;
   gap: 6px;
-  max-height: 60vh;
+  max-height: min(58vh, 520px);
   overflow-y: auto;
+  padding-right: 2px;
 }
 
 .bookmark-card {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 8px;
   width: 100%;
   min-width: 0;
   cursor: pointer;
-  font-size: 13px;
-  padding: 8px 10px;
-  border-radius: 7px;
-  color: white;
-  background: rgba(0, 0, 0, 0.35);
-  transition: background 0.15s ease;
-  box-sizing: border-box;
+  padding: 8px 9px 8px 11px;
+  border-radius: 10px;
+  color: rgba(255, 255, 255, 0.94);
+  background: rgba(20, 20, 20, 0.38);
+  backdrop-filter: blur(10px);
+  font-size: 12.5px;
+  line-height: 1.35;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+  transition: background 0.16s ease, transform 0.16s ease, opacity 0.16s ease;
 }
 
 .bookmark-card:hover {
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(20, 20, 20, 0.6);
+  transform: translateX(-2px);
 }
 
 .bookmark-card.starred {
-  background: rgba(255, 217, 0, 0.18);
+  background: rgba(255, 214, 10, 0.2);
+}
+
+.bookmark-card.starred:hover {
+  background: rgba(255, 214, 10, 0.28);
 }
 
 .bookmark-label {
@@ -124,23 +157,86 @@
 }
 
 .bookmark-star {
-  margin-left: 8px;
+  flex: 0 0 auto;
   cursor: pointer;
   opacity: 0.75;
   font-size: 14px;
+  line-height: 1;
   user-select: none;
-  transition: opacity 0.15s ease;
+  transition: opacity 0.16s ease, transform 0.16s ease;
 }
 
 .bookmark-star:hover {
   opacity: 1;
+  transform: scale(1.15);
+}
+
+#ai-query-bookmarks.collapsed {
+  width: 34px;
+}
+
+#ai-query-bookmarks.collapsed #bookmark-header {
+  padding: 0;
+  justify-content: flex-end;
+}
+
+#ai-query-bookmarks.collapsed #bookmark-title {
+  display: none;
+}
+
+#ai-query-bookmarks.collapsed #bookmark-body {
+  display: none !important;
+}
+
+#ai-query-bookmarks.collapsed #bookmark-collapse {
+  width: 30px;
+  height: 46px;
+  border-radius: 999px 0 0 999px;
+  background: rgba(20, 20, 20, 0.34);
+}
+
+#ai-query-bookmarks.collapsed #bookmark-collapse:hover {
+  background: rgba(20, 20, 20, 0.56);
 }
 
 #bookmark-list::-webkit-scrollbar {
-  width: 6px;
+  width: 5px;
+}
+
+#bookmark-list::-webkit-scrollbar-track {
+  background: transparent;
 }
 
 #bookmark-list::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.25);
-  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.22);
+  border-radius: 999px;
+}
+
+#bookmark-list::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.34);
+}
+
+@media (max-width: 700px) {
+  #ai-query-bookmarks {
+    right: 8px;
+    width: 220px;
+  }
+
+  #bookmark-list {
+    max-height: 45vh;
+  }
+
+  .bookmark-card {
+    font-size: 12px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #ai-query-bookmarks,
+  #bookmark-body,
+  #bookmark-collapse,
+  .bookmark-card,
+  .bookmark-star {
+    transition: none;
+  }
 }
