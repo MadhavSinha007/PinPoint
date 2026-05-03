@@ -124,11 +124,19 @@
 
     if (!body || !collapseButton || !container) return;
 
-    body.style.display = collapsed ? "none" : "flex";
-
     container.classList.toggle("collapsed", collapsed);
 
+    if (collapsed) {
+      body.setAttribute("aria-hidden", "true");
+    } else {
+      body.setAttribute("aria-hidden", "false");
+    }
+
     collapseButton.textContent = collapsed ? "<" : ">";
+    collapseButton.setAttribute(
+      "aria-label",
+      collapsed ? "Expand bookmarks" : "Collapse bookmarks"
+    );
     collapseButton.title = collapsed ? "Expand bookmarks" : "Collapse bookmarks";
   }
 
