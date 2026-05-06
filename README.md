@@ -1,4 +1,4 @@
-# AI Bookmark Pro
+# ChatTrail
 
 A lightweight browser extension that lets you bookmark, search, star, and navigate AI chat prompts across platforms like ChatGPT, Gemini, and Claude without disrupting your workflow.
 
@@ -28,7 +28,7 @@ A lightweight browser extension that lets you bookmark, search, star, and naviga
 
 ## Supported Browsers
 
-### Chromium-based (use Chrome manifest)
+### Chromium-based
 - Google Chrome  
 - Microsoft Edge  
 - Brave  
@@ -36,7 +36,7 @@ A lightweight browser extension that lets you bookmark, search, star, and naviga
 - Vivaldi  
 - Arc  
 
-### Firefox-based (use Firefox manifest)
+### Firefox-based
 - Mozilla Firefox  
 - LibreWolf  
 - Waterfox  
@@ -45,78 +45,21 @@ A lightweight browser extension that lets you bookmark, search, star, and naviga
 
 ## Project Structure
 
-AI-Bookmark-Pro/
+```txt
+ChatTrail/
+├── build.js
+├── manifests/
+│   ├── chrome.json
+│   └── firefox.json
 │
-├── manifest.chrome.json
-├── manifest.firefox.json
+├── src/
+│   ├── content.js
+│   ├── sidebar.css
+│   └── icons/
 │
-├── background.js
-├── content.js
-├── sidebar.css
+├── dist/
+│   ├── chrome/
+│   └── firefox/
 │
-└── icons/
-
----
-
-## Installation
-
-### Chrome / Edge / Brave / Opera
-
-1. Rename:
-manifest.chrome.json -> manifest.json
-
-2. Open:
-chrome://extensions
-
-3. Enable Developer Mode  
-
-4. Click Load Unpacked  
-
-5. Select project folder  
-
----
-
-### Firefox
-
-1. Rename:
-manifest.firefox.json -> manifest.json
-
-2. Open:
-about:debugging#/runtime/this-firefox
-
-3. Click Load Temporary Add-on  
-
-4. Select manifest.json  
-
----
-
-## Usage
-
-- Click bookmark to scroll to message  
-- Click star to mark important  
-- Use search bar to filter bookmarks  
-- Click arrow > or < to collapse sidebar  
-- Press Alt + B to toggle panel  
-
----
-
-## How It Works
-
-- Detects user messages in AI chats  
-- Creates bookmarks automatically  
-- Stores them locally per conversation  
-- Updates in real-time using MutationObserver  
-
----
-
-## Notes
-
-- Firefox uses Manifest V2 as a temporary workaround  
-- Sidebar is transparent and overlays UI  
-- Selectors may need updates if sites change  
-
----
-
-## License
-
-MIT
+├── README.md
+└── PRIVACY_POLICY.md

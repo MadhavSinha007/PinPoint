@@ -1,8 +1,8 @@
 (() => {
   "use strict";
 
-  if (window.__AI_BOOKMARK_PRO_INIT__) return;
-  window.__AI_BOOKMARK_PRO_INIT__ = true;
+  if (window.__CHATTRAIL_INIT__) return;
+  window.__CHATTRAIL_INIT__ = true;
 
   const browserAPI =
     typeof browser !== "undefined"
@@ -12,12 +12,12 @@
         : null;
 
   if (!browserAPI?.storage?.local) {
-    console.warn("[AI Bookmark Pro] Storage API unavailable");
+    console.warn("[ChatTrail] Storage API unavailable");
     return;
   }
 
-  const ROOT_ID = "ai-query-bookmarks";
-  const NAV_EVENT = "ai-bookmark-navigation";
+  const ROOT_ID = "chattrail-sidebar";
+  const NAV_EVENT = "chattrail-navigation";
 
   let bookmarks = [];
   let textToElementMap = new Map();
@@ -41,7 +41,7 @@
   let isLoading = false;
 
   function getConversationKey() {
-    return `ai_bookmarks_${location.hostname}_${location.pathname}_${location.hash}`;
+    return `chattrail_${location.hostname}_${location.pathname}_${location.hash}`;
   }
 
   function init() {
@@ -52,7 +52,7 @@
     observeMessages();
     loadCurrentChat();
 
-    console.log("[AI Bookmark Pro] Initialized");
+    console.log("[ChatTrail] Initialized");
   }
 
   function createUI() {
@@ -67,7 +67,7 @@
 
     const title = document.createElement("span");
     title.id = "bookmark-title";
-    title.textContent = "Bookmarks";
+    title.textContent = "ChatTrail";
 
     const collapseButton = document.createElement("button");
     collapseButton.id = "bookmark-collapse";
@@ -89,7 +89,7 @@
     searchInput = document.createElement("input");
     searchInput.id = "bookmark-search";
     searchInput.type = "search";
-    searchInput.placeholder = "Search bookmarks...";
+    searchInput.placeholder = "Search ChatTrail...";
     searchInput.autocomplete = "off";
 
     searchInput.addEventListener("input", filterBookmarks);
@@ -112,13 +112,13 @@
     body.setAttribute("aria-hidden", collapsed ? "true" : "false");
 
     collapseButton.textContent = collapsed ? "<" : ">";
-    collapseButton.title = collapsed ? "Expand bookmarks" : "Collapse bookmarks";
+    collapseButton.title = collapsed ? "Expand ChatTrail" : "Collapse ChatTrail";
     collapseButton.setAttribute("aria-label", collapseButton.title);
   }
 
   function patchNavigation() {
-    if (window.__AI_BOOKMARK_NAV_PATCHED__) return;
-    window.__AI_BOOKMARK_NAV_PATCHED__ = true;
+    if (window.__CHATTRAIL_NAV_PATCHED__) return;
+    window.__CHATTRAIL_NAV_PATCHED__ = true;
 
     ["pushState", "replaceState"].forEach(method => {
       const original = history[method];

@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "AI Bookmark Pro",
-  "version": "2.1.0",
-  "description": "Automatically bookmarks your AI chat prompts in a lightweight sidebar.",
+  "name": "ChatTrail",
+  "version": "1.0.0",
+  "description": "Navigate your AI chats prompts in a lightweight sidebar.",
   "permissions": ["storage"],
   "content_scripts": [
     {

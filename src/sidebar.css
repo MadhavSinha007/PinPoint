@@ -1,4 +1,4 @@
-#ai-query-bookmarks {
+#chattrail-sidebar {
   position: fixed;
   right: 12px;
   top: 50%;
@@ -16,7 +16,7 @@
   transition: width 0.22s ease, opacity 0.22s ease;
 }
 
-#ai-query-bookmarks * {
+#chattrail-sidebar * {
   box-sizing: border-box;
 }
 
@@ -171,31 +171,31 @@
   transform: scale(1.15);
 }
 
-#ai-query-bookmarks.collapsed {
+#chattrail-sidebar.collapsed {
   width: 34px;
 }
 
-#ai-query-bookmarks.collapsed #bookmark-header {
+#chattrail-sidebar.collapsed #bookmark-header {
   padding: 0;
   justify-content: flex-end;
 }
 
-#ai-query-bookmarks.collapsed #bookmark-title {
+#chattrail-sidebar.collapsed #bookmark-title {
   display: none;
 }
 
-#ai-query-bookmarks.collapsed #bookmark-body {
+#chattrail-sidebar.collapsed #bookmark-body {
   display: none !important;
 }
 
-#ai-query-bookmarks.collapsed #bookmark-collapse {
+#chattrail-sidebar.collapsed #bookmark-collapse {
   width: 30px;
   height: 46px;
   border-radius: 999px 0 0 999px;
   background: rgba(20, 20, 20, 0.34);
 }
 
-#ai-query-bookmarks.collapsed #bookmark-collapse:hover {
+#chattrail-sidebar.collapsed #bookmark-collapse:hover {
   background: rgba(20, 20, 20, 0.56);
 }
 
@@ -217,7 +217,7 @@
 }
 
 @media (max-width: 700px) {
-  #ai-query-bookmarks {
+  #chattrail-sidebar {
     right: 8px;
     width: 220px;
   }
@@ -232,7 +232,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  #ai-query-bookmarks,
+  #chattrail-sidebar,
   #bookmark-body,
   #bookmark-collapse,
   .bookmark-card,

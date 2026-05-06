@@ -1,35 +1,38 @@
-# Privacy Policy for PinPoint
+# Privacy Policy for ChatTrail
 
-PinPoint is a lightweight browser extension that bookmarks AI chat prompts locally in your browser.
+ChatTrail is a lightweight browser extension that bookmarks AI chat prompts locally in your browser.
 
 ## Data Storage
 
-PinPoint stores bookmarked prompt text locally using the browser extension storage API.
+ChatTrail stores bookmarked prompt text locally using the browser extension storage API.
 
 ## Data Collection
 
-PinPoint does not collect personal data.
+ChatTrail does not collect personal data.
 
 ## Data Sharing
 
-PinPoint does not sell, share, transmit, or upload user data to any external server.
+ChatTrail does not sell, share, transmit, or upload user data to any external server.
 
 ## Remote Servers
 
-PinPoint does not use any remote server.
+ChatTrail does not use any remote server.
 
 ## Analytics
 
-PinPoint does not use analytics, tracking, advertising, or telemetry.
+ChatTrail does not use analytics, tracking, advertising, or telemetry.
 
 ## Account Requirement
 
-PinPoint does not require an account.
+ChatTrail does not require an account.
 
 ## Permissions
 
-PinPoint requests storage permission only to save bookmarks locally in your browser.
+ChatTrail requests storage permission only to save bookmarks locally in your browser.
 
 ## Contact
 
-For questions, contact: fakeggod810@gmail.com , contact: gooseyns@gmail.com
+For questions, contact:
+
+- fakeggod810@gmail.com
+- gooseyns@gmail.com
